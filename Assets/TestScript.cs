@@ -40,13 +40,19 @@ public class TestScript : MonoBehaviour
         var B = math.dot(math.cross(r, v), n);
         var C = math.dot(v, r) * math.dot(n, r);
 
-        var tmp1 = (A - C);
+        var tmp1 = C - A;
         var tmp2 = B * B;
         var tmp3 = tmp1 * tmp1 + tmp2;
         var delta = math.sqrt(tmp2 * (tmp3 - C * C));
 
-        theta1 = math.acos((-C * tmp1 - delta) / tmp3);
-        theta2 = math.acos((-C * tmp1 + delta) / tmp3);
+        var x = ((C * tmp1) - delta) / tmp3;
+        var y = tmp1 * x / B - C / B;
+        theta1 = math.atan2(y, x);
+
+        x = ((C * tmp1) + delta) / tmp3;
+        y = tmp1 * x / B - C / B;
+        theta2 = math.atan2(y, x);
+
         return true;
     }
 
@@ -67,10 +73,10 @@ public class TestScript : MonoBehaviour
         {
             var v1 = math.mul(Euler(r, theta1), v);
             var v2 = math.mul(Euler(r, theta2), v);
-            var solution = math.abs(math.dot(v1, n)) < math.abs(math.dot(v2, n)) ? v1 : v2;
 
             Gizmos.color = Color.magenta;
-            Gizmos.DrawRay(transform.position, math.normalize(solution));
+            Gizmos.DrawRay(transform.position, math.normalize(v1));
+            Gizmos.DrawRay(transform.position, math.normalize(v2));
         }
     }
 }
